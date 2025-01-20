@@ -11,8 +11,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Booking } from '@/models/booking';
 
-const EquipmentDetails = ({ params }: { params: Promise<{ slug: string }> }) => {
-  const slug = React.use(params).slug;
+const EquipmentDetails = ({ params }: { params: { slug: string } }) => {
+  const slug = params.slug;
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('bookingId');
