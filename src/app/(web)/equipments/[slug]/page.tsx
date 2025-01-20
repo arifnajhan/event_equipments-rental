@@ -7,22 +7,35 @@ import LoadingSpinner from '../../loading';
 import EventPhotoGallery from '@/components/EventPhotoGallery/EventPhotoGallery';
 import BookEquipmentCta from '@/components/BookEquipmentCta/BookEquipmentCta';
 import toast from 'react-hot-toast';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Booking } from '@/models/booking';
 
-const EquipmentDetails = ({ params }: { params: { slug: string } }) => {
-  const slug = params.slug; 
+const EquipmentDetails = () => {
+  const params = useParams();
+  const slug = params?.slug;
+
+  if (!slug) {
+    return <div>Slug not found</div>;
+  }
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('bookingId');
   const { data: session } = useSession();
-  
+
   const [rentDate, setRentDate] = useState<Date | null>(null);
   const [returnDate, setReturnDate] = useState<Date | null>(null);
   const [existingBooking, setExistingBooking] = useState<Booking | null>(null);
 
-  const fetchEquipment = async () => getEquipment(slug);
+  const fetchEquipment = async () => {
+    if (typeof slug === 'string') {
+      return getEquipment(slug);
+    } else {
+      throw new Error('Slug must be a string');
+    }
+  };
+
   const { data: equipment, error, isLoading } = useSWR('/api/equipment', fetchEquipment);
 
   useEffect(() => {

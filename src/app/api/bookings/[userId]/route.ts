@@ -2,13 +2,8 @@ import { authenticateRequest } from '@/libs/authUtils';
 import sanityClient from '@/libs/sanity';
 import { NextRequest, NextResponse } from 'next/server';
 
-interface RouteContext {
-    params: { userId: string }
-}
-
 export async function PUT(
-    req: NextRequest,
-    context: RouteContext
+    req: NextRequest
 ) {
     try {
         const auth = await authenticateRequest();
@@ -21,6 +16,10 @@ export async function PUT(
                 { status: 401 }
             );
         }
+
+        // Get userId from URL
+        const urlParts = req.nextUrl.pathname.split('/');
+        const userId = urlParts[urlParts.length - 2];
 
         // Get bookingId from query params
         const searchParams = req.nextUrl.searchParams;
@@ -72,8 +71,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-    req: NextRequest,
-    context: RouteContext
+    req: NextRequest
 ) {
     try {
         const auth = await authenticateRequest();
@@ -86,6 +84,10 @@ export async function DELETE(
                 { status: 401 }
             );
         }
+
+        // Get userId from URL
+        const urlParts = req.nextUrl.pathname.split('/');
+        const userId = urlParts[urlParts.length - 2];
 
         // Get bookingId from query params
         const searchParams = req.nextUrl.searchParams;

@@ -21,12 +21,19 @@ export async function POST(request: Request) {
 import { NextResponse } from 'next/server';
 import { updatePaymentStatus, getPayment } from '@/libs/apis';
 
-export async function GET(
-    request: Request,
-    { params }: { params: { paymentId: string } }
-) {
+export async function GET(request: Request) {
     try {
-        const payment = await getPayment(params.paymentId);
+        const url = new URL(request.url);
+        const paymentId = url.pathname.split('/').pop();
+
+        if (!paymentId) {
+            return NextResponse.json(
+                { error: 'Payment ID is required' },
+                { status: 400 }
+            );
+        }
+
+        const payment = await getPayment(paymentId);
         return NextResponse.json(payment);
     } catch (error) {
         return NextResponse.json(
@@ -36,15 +43,22 @@ export async function GET(
     }
 }
 
-export async function PUT(
-    request: Request,
-    { params }: { params: { paymentId: string } }
-) {
+export async function PUT(request: Request) {
     try {
+        const url = new URL(request.url);
+        const paymentId = url.pathname.split('/').pop();
+
+        if (!paymentId) {
+            return NextResponse.json(
+                { error: 'Payment ID is required' },
+                { status: 400 }
+            );
+        }
+
         const body = await request.json();
         const { paymentStatus, paymentDetails } = body;
         const result = await updatePaymentStatus(
-            params.paymentId,
+            paymentId,
             paymentStatus,
             paymentDetails
         );
