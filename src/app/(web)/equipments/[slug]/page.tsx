@@ -11,9 +11,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Booking } from '@/models/booking';
 
-const EquipmentDetails = ({ params }: { params: { slug: string } }) => {
-  const unwrappedParams = React.use(params);
-  const { slug } = unwrappedParams;
+const EquipmentDetails = ({ params }: { params: Promise<{ slug: string }> }) => {
+  const slug = React.use(params).slug;
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('bookingId');
@@ -82,7 +81,6 @@ const EquipmentDetails = ({ params }: { params: { slug: string } }) => {
     const totalAmount = numberOfDays * equipment.price;
 
     if (existingBooking) {
-      // Update existing booking
       try {
         await updateBooking({
           bookingId: existingBooking._id,
@@ -98,7 +96,6 @@ const EquipmentDetails = ({ params }: { params: { slug: string } }) => {
         toast.error('Error updating booking');
       }
     } else {
-      // Create new booking
       const searchParams = new URLSearchParams({
         amount: totalAmount.toString(),
         equipment: equipment.name,
@@ -141,8 +138,8 @@ const EquipmentDetails = ({ params }: { params: { slug: string } }) => {
               isBooked={equipment.isBooked && !existingBooking}
               handleBookNowClick={handleBookNowClick}
               existingBooking={existingBooking || undefined}
-              equipmentId={equipment._id} // Add this
-              calcNumDays={calcNumDays} // Add this
+              equipmentId={equipment._id}
+              calcNumDays={calcNumDays}
             />
           </div>
         </div>
