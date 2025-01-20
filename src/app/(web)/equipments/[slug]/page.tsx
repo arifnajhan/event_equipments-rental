@@ -12,7 +12,7 @@ import { useSession } from 'next-auth/react';
 import { Booking } from '@/models/booking';
 
 const EquipmentDetails = ({ params }: { params: { slug: string } }) => {
-  const slug = params.slug;
+  const slug = params.slug; 
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('bookingId');
